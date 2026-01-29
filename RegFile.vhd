@@ -18,7 +18,7 @@ end entity;
 
 architecture behave of regfile is
     type ramtype is array (31 downto 0) of std_logic_vector(31 downto 0);
-    signal mem : ramtype := (others => (others => '0'));
+    signal mem : ramtype;
 
     signal wb_en   : std_logic := '0';
     signal wb_addr : std_logic_vector(4 downto 0) := (others => '0');
