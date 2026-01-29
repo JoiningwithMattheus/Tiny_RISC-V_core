@@ -6,8 +6,8 @@ entity ALUControl is
         funct7 : in  STD_LOGIC_VECTOR(6 downto 0);
         funct3 : in  STD_LOGIC_VECTOR(2 downto 0);
         ALUE   : in  STD_LOGIC;                      -- I-type vs R-type selector
-        ALUOp  : out STD_LOGIC_VECTOR(3 downto 0);   -- 4-bit internal ALU opcode (matches ALUextended)
-        isBranch: in STD_LOGIC                       
+        ALUOp  : out STD_LOGIC_VECTOR(3 downto 0);   -- 4-bit internal ALU opcode, corresponding with ALUextended
+        isBranch: in STD_LOGIC                        -- when '1' force comparator (SUB), below
     );
 end entity;
 
@@ -18,17 +18,17 @@ begin
         -- default = ADD
         ALUOp <= "0000";
 
-        -- use SUB
+        -- use SUB to compare
         if isBranch = '1' then
             ALUOp <= "0001"; -- SUB
         else
-            -- ALUE = '0' indicates I-type (addi/ori etc.) -> choose based on funct3
+            -- ALUE = '0' indicates I-type-> choose based on funct3
             -- ALUE = '1' indicates R-type -> use funct7/funct3 mapping
             if ALUE = '0' then
-                -- I-type arithmetic immediates (support ADDI and ORI from your original list)
+                -- I-type 
                 case funct3 is
-                    when "000" => ALUOp <= "0000"; -- ADDI => ADD
-                    when "110" => ALUOp <= "0011"; -- ORI  => OR
+                    when "000" => ALUOp <= "0000"; -- ADDI
+                    when "110" => ALUOp <= "0011"; -- ORI
                     when others => ALUOp <= "0000";
                 end case;
             else

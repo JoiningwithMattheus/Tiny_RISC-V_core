@@ -33,7 +33,6 @@ architecture behave of DataMemory is
 
 begin
 
-    -- Word address index
     index <= to_integer(unsigned(addr(9 downto 2)));
 
     -- MMIO address match (combinational)
@@ -43,7 +42,7 @@ begin
 
     -- Provide write & read enables
     gpio_wr_en <= we and mmio_select;
-    gpio_rd_en <= mmio_select; -- combinational; GPIO will check rd_en and addr to return data
+    gpio_rd_en <= mmio_select; -- combinational
 
     -- GPIO
     GPIO_inst: entity work.GPIO
@@ -68,14 +67,12 @@ begin
                     -- MMIO write — handled by GPIO write on same rising edge via gpio_wr_en (combinational)
                     null; -- do not write DMEM
                 else
-                    -- normal DMEM write
                     DMEM(index) <= wd;
                 end if;
             end if;
         end if;
     end process;
 
-    -- Combinational read: choose MMIO or DMEM
     process(addr, DMEM, mmio_rd_data)
     begin
         if mmio_select = '1' then
